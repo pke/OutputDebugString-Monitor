@@ -6,6 +6,12 @@ import outputdebugstring.monitor.internal.Psapi;
 
 import com.sun.jna.examples.win32.W32API.HANDLE;
 
+/**
+ * Event sent to Listener.
+ * 
+ * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
+ *
+ */
 public class DebugStringEvent extends EventObject {
 	private static final long serialVersionUID = 8342417294918417860L;
 	private final String text;
