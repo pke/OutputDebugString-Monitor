@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 
+import outputdebugstring.monitor.DebugStringEvent;
 import outputdebugstring.monitor.Listener;
 
 /**
@@ -32,12 +33,12 @@ public class EventAdminListener implements Listener {
 		this.eventAdminRef.set(eventAdmin);
 	}
 
-	public void onDebugString(final int processId, final String text) {
+	public void onDebugString(final DebugStringEvent event) {
 		final EventAdmin eventAdmin = this.eventAdminRef.get();
 		if (eventAdmin != null) {
 			final Map<String, Object> props = new HashMap<String, Object>();
-			props.put(PROCESS_ID, processId);
-			props.put(TEXT2, text);
+			props.put(PROCESS_ID, event.getProcessId());
+			props.put(TEXT2, event.getText());
 			eventAdmin.postEvent(new Event(EVENT_TOPIC, props));
 		}
 	}

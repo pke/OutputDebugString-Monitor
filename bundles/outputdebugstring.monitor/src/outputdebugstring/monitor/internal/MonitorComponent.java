@@ -3,6 +3,7 @@ package outputdebugstring.monitor.internal;
 import java.util.ArrayList;
 import java.util.List;
 
+import outputdebugstring.monitor.DebugStringEvent;
 import outputdebugstring.monitor.Listener;
 import outputdebugstring.monitor.Monitor;
 
@@ -28,10 +29,11 @@ public class MonitorComponent {
 		this.monitor = new Monitor() {
 			@Override
 			protected void onDebugString(final int processId, final String text) {
+				final DebugStringEvent event = new DebugStringEvent(this, processId, text);
 				synchronized (MonitorComponent.this.listeners) {
 					for (final Listener listener : MonitorComponent.this.listeners) {
 						try {
-							listener.onDebugString(processId, text);
+							listener.onDebugString(event);
 						} catch (final Throwable e) {
 							e.printStackTrace();
 						}

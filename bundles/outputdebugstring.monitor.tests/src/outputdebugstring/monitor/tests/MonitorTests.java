@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import outputdebugstring.monitor.DebugStringEvent;
 import outputdebugstring.monitor.Kernel32;
 import outputdebugstring.monitor.Listener;
 import outputdebugstring.monitor.Monitor;
@@ -94,8 +95,8 @@ public class MonitorTests {
 		component.start();
 		assertTrue(containsThreadName(findAllThreads(), "OutputDebugString Monitor")); //$NON-NLS-1$
 		component.addListener(new Listener() {
-			public void onDebugString(final int processId, final String text) {
-				assertEquals("Test", text); //$NON-NLS-1$
+			public void onDebugString(final DebugStringEvent event) {
+				assertEquals("Test", event.getText()); //$NON-NLS-1$
 			}
 		});
 		Kernel32.INSTANCE.OutputDebugString("Test"); //$NON-NLS-1$

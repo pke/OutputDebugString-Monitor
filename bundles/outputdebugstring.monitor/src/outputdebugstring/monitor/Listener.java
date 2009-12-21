@@ -13,9 +13,8 @@ import outputdebugstring.monitor.internal.MonitorComponent;
 public interface Listener {
 	/**
 	 * Called when a new debug string event occurs.
-	 * 
-	 * @param processId of the process that called OutputDebugString
-	 * @param text that was sent to OutputDebugString
+	 *
+	 * @param event
 	 */
-	void onDebugString(int processId, String text);
+	void onDebugString(DebugStringEvent event);
 }
