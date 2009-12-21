@@ -10,11 +10,10 @@ public class DebugStringEvent extends EventObject {
 	private static final long serialVersionUID = 8342417294918417860L;
 	private final String text;
 	private final int processId;
-	private String processName;
+	private transient String processName;
 
 	public DebugStringEvent(final Monitor source, final int processId, final String text) {
 		super(source);
-
 		this.processId = processId;
 		this.text = text;
 	}
