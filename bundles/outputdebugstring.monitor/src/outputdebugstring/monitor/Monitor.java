@@ -77,12 +77,12 @@ abstract public class Monitor implements Runnable {
 	 */
 	public void stop() {
 		this.run = false;
-		Kernel32.INSTANCE.PulseEvent(this.dataReadyEvent);
+		Kernel32.INSTANCE.SetEvent(this.dataReadyEvent);
 		try {
 			if (this.thread != null) {
 				this.thread.join();
 			}
-		} catch (final InterruptedException e) {
+		} catch (final Exception e) {
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package outputdebugstring.monitor.internal;
 
-import org.osgi.service.component.ComponentContext;
+import java.util.ArrayList;
+import java.util.List;
 
 import outputdebugstring.monitor.Listener;
 import outputdebugstring.monitor.Monitor;
@@ -13,23 +14,29 @@ import outputdebugstring.monitor.Monitor;
  */
 public class MonitorComponent {
 	private Monitor monitor;
+	private final List<Listener> listeners = new ArrayList<Listener>();
 
-	protected void activate(final ComponentContext context) {
+	synchronized public void addListener(final Listener listener) {
+		this.listeners.add(listener);
+	}
+
+	synchronized public void removeListener(final Listener listener) {
+		this.listeners.remove(listener);
+	}
+
+	protected void activate() {
 		this.monitor = new Monitor() {
-
 			@Override
 			protected void onDebugString(final int processId, final String text) {
-				final Object[] listeners = context.locateServices("Listener"); //$NON-NLS-1$
-				if (listeners != null) {
-					for (final Object listener : listeners) {
+				synchronized (MonitorComponent.this.listeners) {
+					for (final Listener listener : MonitorComponent.this.listeners) {
 						try {
-							((Listener) listener).onDebugString(processId, text);
+							listener.onDebugString(processId, text);
 						} catch (final Throwable e) {
 						}
 					}
 				}
 			}
-
 		};
 	}
 

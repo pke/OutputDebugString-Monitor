@@ -7,7 +7,9 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import outputdebugstring.monitor.Kernel32;
+import outputdebugstring.monitor.Listener;
 import outputdebugstring.monitor.Monitor;
+import outputdebugstring.monitor.internal.MonitorComponent;
 
 public class MonitorTests {
 
@@ -68,6 +70,36 @@ public class MonitorTests {
 		};
 		Kernel32.INSTANCE.OutputDebugString("Test"); //$NON-NLS-1$
 		monitor.stop();
+		assertFalse(containsThreadName(findAllThreads(), "OutputDebugString Monitor")); //$NON-NLS-1$
+	}
+
+	/**
+	 * Makes the activate and deactivate methods accessible.
+	 *
+	 */
+	class MonitorComponentMockup extends MonitorComponent {
+		void start() {
+			activate();
+		}
+
+		void stop() {
+			deactivate();
+		}
+	}
+
+	@Test
+	public void componentListenerManagement() {
+		final MonitorComponentMockup component = new MonitorComponentMockup();
+		assertFalse(containsThreadName(findAllThreads(), "OutputDebugString Monitor")); //$NON-NLS-1$
+		component.start();
+		assertTrue(containsThreadName(findAllThreads(), "OutputDebugString Monitor")); //$NON-NLS-1$
+		component.addListener(new Listener() {
+			public void onDebugString(final int processId, final String text) {
+				assertEquals("Test", text); //$NON-NLS-1$
+			}
+		});
+		Kernel32.INSTANCE.OutputDebugString("Test"); //$NON-NLS-1$
+		component.stop();
 		assertFalse(containsThreadName(findAllThreads(), "OutputDebugString Monitor")); //$NON-NLS-1$
 	}
 }
