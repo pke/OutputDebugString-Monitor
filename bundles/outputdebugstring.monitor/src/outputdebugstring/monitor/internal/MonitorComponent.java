@@ -33,6 +33,7 @@ public class MonitorComponent {
 						try {
 							listener.onDebugString(processId, text);
 						} catch (final Throwable e) {
+							e.printStackTrace();
 						}
 					}
 				}

@@ -46,6 +46,7 @@ abstract public class Monitor implements Runnable {
 				if (!this.run) {
 					break;
 				}
+
 				if (ret == 0) { // WAIT_OBJECT_0
 					// First 4 bytes contain the process ID of the process that called OutputDebugString
 					final int processId = this.sharedMemory.getInt(0);
