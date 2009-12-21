@@ -82,7 +82,7 @@ abstract public class Monitor implements Runnable {
 			if (this.thread != null) {
 				this.thread.join();
 			}
-		} catch (final Exception e) {
+		} catch (final InterruptedException e) {
 		}
 	}
 }
