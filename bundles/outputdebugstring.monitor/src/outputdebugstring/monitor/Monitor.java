@@ -24,7 +24,7 @@ abstract public class Monitor implements Runnable {
 	private final Thread thread;
 
 	public Monitor() {
-		this.thread = new Thread(this, "OutputDebugString monitor"); //$NON-NLS-1$
+		this.thread = new Thread(this, "OutputDebugString Monitor"); //$NON-NLS-1$
 		this.thread.setDaemon(true);
 
 		this.bufferReadyEvent = Kernel32.INSTANCE.CreateEvent(null, false, false, DBWIN_BUFFER_READY_EVENT);
@@ -78,5 +78,11 @@ abstract public class Monitor implements Runnable {
 	public void stop() {
 		this.run = false;
 		Kernel32.INSTANCE.PulseEvent(this.dataReadyEvent);
+		try {
+			if (this.thread != null) {
+				this.thread.join();
+			}
+		} catch (final InterruptedException e) {
+		}
 	}
 }
