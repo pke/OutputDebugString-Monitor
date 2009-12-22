@@ -1,5 +1,16 @@
+/*******************************************************************************
+* Copyright (c) 2009 Philipp Kursawe.
+* All rights reserved. This program and the accompanying materials
+* are made available under the terms of the Eclipse Public License v1.0
+* which accompanies this distribution, and is available at
+* http://www.eclipse.org/legal/epl-v10.html
+*
+* Contributors:
+* Philipp Kursawe - initial API and implementation
+******************************************************************************/
 package outputdebugstring.monitor.internal;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.osgi.framework.ServiceReference;
@@ -18,6 +29,8 @@ import outputdebugstring.monitor.Listener;
 public class LogServiceListener implements Listener {
 	private final AtomicReference<LogService> logServiceRef = new AtomicReference<LogService>();
 	private ServiceReference ref;
+	private final boolean logProcessName = true;
+	private final String logFormat = "[%d] %s";
 
 	protected void activate(final ComponentContext context) {
 		this.ref = context.getServiceReference();
@@ -33,5 +46,9 @@ public class LogServiceListener implements Listener {
 			logService.log(this.ref, LogService.LOG_DEBUG, String.format(
 					"[%d, %s] %s", event.getProcessId(), event.getProcessName(), event.getText())); //$NON-NLS-1$
 		}
+	}
+
+	protected void updated(final Map<String, Object> config) {
+
 	}
 }
