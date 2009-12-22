@@ -1,16 +1,12 @@
-package outputdebugstring.monitor.tests;
+package outputdebugstring.core.tests;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import outputdebugstring.core.DebugStringEvent;
 import outputdebugstring.core.Kernel32;
 import outputdebugstring.core.Monitor;
-import outputdebugstring.core.osgi.component.Listener;
-import outputdebugstring.core.osgi.component.internal.MonitorComponent;
 
 public class MonitorTests {
 
@@ -46,6 +42,7 @@ public class MonitorTests {
 
 	@Test
 	public void callOutputDebugString() {
+		Kernel32.INSTANCE.CloseHandle(null);
 		Kernel32.INSTANCE.OutputDebugString("Test"); //$NON-NLS-1$
 	}
 
@@ -71,36 +68,6 @@ public class MonitorTests {
 		};
 		Kernel32.INSTANCE.OutputDebugString("Test"); //$NON-NLS-1$
 		monitor.stop();
-		assertFalse(containsThreadName(findAllThreads(), "OutputDebugString Monitor")); //$NON-NLS-1$
-	}
-
-	/**
-	 * Makes the activate and deactivate methods accessible.
-	 *
-	 */
-	class MonitorComponentMockup extends MonitorComponent {
-		void start() {
-			activate();
-		}
-
-		void stop() {
-			deactivate();
-		}
-	}
-
-	@Test
-	public void componentListenerManagement() {
-		final MonitorComponentMockup component = new MonitorComponentMockup();
-		assertFalse(containsThreadName(findAllThreads(), "OutputDebugString Monitor")); //$NON-NLS-1$
-		component.start();
-		assertTrue(containsThreadName(findAllThreads(), "OutputDebugString Monitor")); //$NON-NLS-1$
-		component.addListener(new Listener() {
-			public void onDebugString(final DebugStringEvent event) {
-				assertEquals("Test", event.getText()); //$NON-NLS-1$
-			}
-		});
-		Kernel32.INSTANCE.OutputDebugString("Test"); //$NON-NLS-1$
-		component.stop();
 		assertFalse(containsThreadName(findAllThreads(), "OutputDebugString Monitor")); //$NON-NLS-1$
 	}
 }

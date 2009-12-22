@@ -2,4 +2,4 @@
 /.metadata
 
 # Eclipse compiler output
-*/bin
+bin/
