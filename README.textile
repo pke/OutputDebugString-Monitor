@@ -23,32 +23,4 @@ This code is currently experimental.
 
 h2. License
 
-=======
-﻿h1. OutputDebugString Monitor
-
-Catching Win32 debug string events from Java
-
-This set of bundles provides access to the output created by calls to the Win32 kernel API function "OutputDebugString":http://msdn.microsoft.com/en-us/library/aa363362%28VS.85%29.aspx.
-
-It also provides you the ability to use this function from Java.
-
-h2. Bundles
-
-The project contains different bundles described here shortly.
-
-* outputdebugstring.core - Monitor and OutputDebugString function for Java
-* outputdebugstring.ui - View for incoming debug strings
-* outputdebugstring.osgi.component - An OSGi component for the Monitor class
-* outputdebugstring.osgi.log - logs debug strings using the OSGi LogService
-* outputdebugstring.osgi.event - publishes events for debug strings using the OSGi EventAdmin
-
-Please note, that all the OSGi services are lazy loaded only if the referenced services (LogService, EventAdmin) are available. If no service publishes the @Listener@ interface the Monitor Component will not be instantiated.
-
-
-h2. WARNING
-
-This code is currently experimental.
-
-h2. License
-
 All code and examples are licensed under the Eclipse Public License version 1.0.
