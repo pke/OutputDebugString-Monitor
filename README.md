@@ -3,6 +3,8 @@
 
 This set of bundles provides access to the output created by calls to the Win32 kernel API function [OuputDebugString](http://msdn.microsoft.com/en-us/library/aa363362%28VS.85%29.aspx).
 
+It also provides you the ability to use this method from Java.
+
 WARNING
 -------
 
