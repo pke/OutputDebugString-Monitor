@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name
+Bundle-SymbolicName: outputdebugstring.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: %Bundle-Vendor
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Import-Package: eu.wwuk.eclipse.extsvcs.core,
+ org.eclipse.core.commands.common,
+ org.eclipse.core.runtime;version="3.4.0",
+ org.eclipse.jface.util,
+ org.eclipse.swt.graphics,
+ org.eclipse.swt.widgets,
+ org.eclipse.ui.part,
+ org.eclipse.ui.views,
+ outputdebugstring.core.osgi.component;version="1.0.0"

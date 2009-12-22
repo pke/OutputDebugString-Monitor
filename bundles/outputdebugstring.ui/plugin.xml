@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="eu.wwuk.eclipse.extsvcs.core.InjectionFactory:outputdebugstring.ui.DebugView"
+            id="outputdebugstring.ui.DebugView"
+            name="%view.name"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="eu.wwuk.eclipse.extsvcs.core.injectedFactories">
+      <factory
+            class="outputdebugstring.ui.internal.DebugView"
+            id="outputdebugstring.ui.DebugView">
+         <service>
+            <provide
+                  interface="outputdebugstring.core.osgi.component.Listener">
+            </provide>
+         </service>
+      </factory>
+   </extension>
+
+</plugin>

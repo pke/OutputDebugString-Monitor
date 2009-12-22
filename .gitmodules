@@ -1,0 +1,3 @@
+[submodule "Extensions2Services"]
+	path = Extensions2Services
+	url = git://github.com/njbartlett/Extensions2Services.git
