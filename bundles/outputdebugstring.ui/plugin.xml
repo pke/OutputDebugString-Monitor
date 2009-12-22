@@ -4,23 +4,106 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="eu.wwuk.eclipse.extsvcs.core.InjectionFactory:outputdebugstring.ui.DebugView"
+            class="outputdebugstring.ui.internal.DebugView"
+            icon="icons/e16/view.png"
             id="outputdebugstring.ui.DebugView"
             name="%view.name"
             restorable="true">
       </view>
    </extension>
    <extension
-         point="eu.wwuk.eclipse.extsvcs.core.injectedFactories">
-      <factory
-            class="outputdebugstring.ui.internal.DebugView"
-            id="outputdebugstring.ui.DebugView">
-         <service>
-            <provide
-                  interface="outputdebugstring.core.osgi.component.Listener">
-            </provide>
-         </service>
-      </factory>
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:outputdebugstring.ui.DebugView">
+         <command
+               commandId="outputdebugstring.ui.CaptureCommand"
+               style="toggle">
+         </command>
+         <separator
+               name="outputdebugstring.ui.separator1"
+               visible="true">
+         </separator>
+         <command
+               commandId="outputdebugstring.ui.EraseCommand"
+               style="push">
+         </command>
+         <command
+               commandId="outputdebugstring.ui.AutoscrollCommand"
+               style="radio">
+         </command>
+         <command
+               commandId="outputdebugstring.ui.TimeFormatCommand"
+               style="toggle">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="outputdebugstring.ui.internal.handlers.DebugViewToggleHandler:outputdebugstring.ui.internal.CaptureToggler"
+            id="outputdebugstring.ui.CaptureCommand"
+            name="Capture">
+            <state
+              class="org.eclipse.ui.handlers.RegistryToggleState:true"
+              id="org.eclipse.ui.commands.toggleState">
+            </state>
+      </command>
+      <command
+            defaultHandler="outputdebugstring.ui.internal.handlers.DebugViewToggleHandler:outputdebugstring.ui.internal.TimeFormatToggler"
+            id="outputdebugstring.ui.TimeFormatCommand"
+            name="Time format">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:true"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
+      </command>
+      <command
+            defaultHandler="outputdebugstring.ui.internal.handlers.DebugViewToggleHandler:outputdebugstring.ui.internal.AutoScrollToggler"
+            id="outputdebugstring.ui.AutoscrollCommand"
+            name="Autoscroll">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:true"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
+      </command>
+      <command
+            id="outputdebugstring.ui.EraseCommand"
+            name="Erase">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commandImages">
+      <image
+            commandId="outputdebugstring.ui.CaptureCommand"
+            icon="icons/e16/search.png">
+      </image>
+      <image
+            commandId="outputdebugstring.ui.TimeFormatCommand"
+            icon="icons/e16/clock.png">
+      </image>
+      <image
+            commandId="outputdebugstring.ui.AutoscrollCommand"
+            icon="icons/e16/autoscroll.png">
+      </image>
+      <image
+            commandId="outputdebugstring.ui.EraseCommand"
+            icon="icons/e16/erase.png">
+      </image>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="outputdebugstring.ui.internal.handlers.EraseHandler"
+            commandId="outputdebugstring.ui.EraseCommand">
+         <!--enabledWhen>
+            <with
+                  variable="activePart">
+               <adapt
+                     type="outputdebugstring.ui.Eraseable">
+               </adapt>
+            </with>
+         </enabledWhen-->
+      </handler>
    </extension>
 
 </plugin>

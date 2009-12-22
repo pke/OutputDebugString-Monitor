@@ -10,6 +10,7 @@
 ******************************************************************************/
 package outputdebugstring.core;
 
+import java.util.Date;
 import java.util.EventObject;
 
 import outputdebugstring.core.internal.Psapi;
@@ -27,11 +28,15 @@ public class DebugStringEvent extends EventObject {
 	private final String text;
 	private final int processId;
 	private transient String processName;
+	private final long time;
+	private transient Date date;
+	private static final long firstTime = System.currentTimeMillis();
 
 	public DebugStringEvent(final Monitor source, final int processId, final String text) {
 		super(source);
 		this.processId = processId;
 		this.text = text;
+		this.time = System.currentTimeMillis();
 	}
 
 	public String getText() {
@@ -62,4 +67,22 @@ public class DebugStringEvent extends EventObject {
 		return this.processName;
 	}
 
+	public long getTime() {
+		return this.time;
+	}
+
+	/**
+	 * @return the difference from the first captured <code>DebugStringEvent</code>.
+	 */
+	public long getTimeOffset() {
+		return this.time - firstTime;
+	}
+
+	public Date getDate() {
+		if (this.date == null) {
+			this.date = new Date(this.time);
+		}
+
+		return this.date;
+	}
 }
