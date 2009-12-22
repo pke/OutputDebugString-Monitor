@@ -13,6 +13,8 @@ package outputdebugstring.core.osgi.component.internal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.osgi.service.component.ComponentContext;
+
 import outputdebugstring.core.DebugStringEvent;
 import outputdebugstring.core.Monitor;
 import outputdebugstring.core.osgi.component.Listener;
@@ -35,12 +37,20 @@ public class MonitorComponent {
 		this.listeners.remove(listener);
 	}
 
-	protected void activate() {
+	protected void activate(final ComponentContext context) {
 		this.monitor = new Monitor() {
 			@Override
 			protected void onDebugString(final int processId, final String text) {
 				final DebugStringEvent event = new DebugStringEvent(this, processId, text);
-				synchronized (MonitorComponent.this.listeners) {
+				final Object[] listeners = context.locateServices("Listener"); //$NON-NLS-1$
+				for (final Object listener : listeners) {
+					try {
+						((Listener) listener).onDebugString(event);
+					} catch (final Throwable e) {
+						e.printStackTrace();
+					}
+				}
+				/*synchronized (MonitorComponent.this.listeners) {
 					for (final Listener listener : MonitorComponent.this.listeners) {
 						try {
 							listener.onDebugString(event);
@@ -48,7 +58,7 @@ public class MonitorComponent {
 							e.printStackTrace();
 						}
 					}
-				}
+				}*/
 			}
 		};
 	}

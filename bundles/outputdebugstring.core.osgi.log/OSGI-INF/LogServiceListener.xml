@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="outputdebugstring.monitor.LogServiceListener">
-   <implementation class="outputdebugstring.monitor.internal.LogServiceListener"/>
-   <reference bind="bind" cardinality="1..1" interface="org.osgi.service.log.LogService" name="LogService" policy="static"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="outputdebugstring.core.osgi.log.LogServiceListener">
+   <implementation class="outputdebugstring.core.osgi.log.internal.LogServiceListener"/>
+   <reference cardinality="1..1" interface="org.osgi.service.log.LogService" name="LogService" policy="static"/>
    <service>
-      <provide interface="outputdebugstring.monitor.Listener"/>
+      <provide interface="outputdebugstring.core.osgi.component.Listener"/>
    </service>
 </scr:component>
