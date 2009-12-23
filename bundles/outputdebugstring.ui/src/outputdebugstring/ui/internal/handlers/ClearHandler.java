@@ -5,14 +5,14 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import outputdebugstring.ui.Eraseable;
+import outputdebugstring.ui.Clearable;
 
-public class EraseHandler extends AbstractHandler {
+public class ClearHandler extends AbstractHandler {
 
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		final Eraseable eraseable = (Eraseable) HandlerUtil.getActivePartChecked(event).getAdapter(Eraseable.class);
-		if (eraseable != null) {
-			eraseable.erase();
+		final Clearable clearable = (Clearable) HandlerUtil.getActivePartChecked(event).getAdapter(Clearable.class);
+		if (clearable != null) {
+			clearable.clear();
 		}
 		return null;
 	}

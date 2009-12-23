@@ -33,9 +33,9 @@ import org.osgi.framework.ServiceRegistration;
 
 import outputdebugstring.core.DebugStringEvent;
 import outputdebugstring.core.osgi.component.Listener;
-import outputdebugstring.ui.Eraseable;
+import outputdebugstring.ui.Clearable;
 
-public class DebugView extends ViewPart implements Listener, Eraseable {
+public class DebugView extends ViewPart implements Listener, Clearable {
 	public static final String ID = "outputdebugstring.ui.DebugView"; //$NON-NLS-1$
 
 	private TableViewer viewer;
@@ -138,16 +138,16 @@ public class DebugView extends ViewPart implements Listener, Eraseable {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(final Class adapter) {
+		final DebugView view = this;
 		if (adapter == AutoScrollToggler.class) {
 			return new AutoScrollToggler() {
 				public void toggle(final boolean toggle) {
-					DebugView.this.autoscroll = toggle;
-					if (DebugView.this.autoscroll && !DebugView.this.events.isEmpty()) {
+					view.autoscroll = toggle;
+					if (view.autoscroll && !view.events.isEmpty()) {
 						updateViewer(new Runnable() {
 							public void run() {
-								final DebugStringEvent lastEvent = DebugView.this.events.get(DebugView.this.events
-										.size() - 1);
-								DebugView.this.viewer.reveal(lastEvent);
+								final DebugStringEvent lastEvent = view.events.get(view.events.size() - 1);
+								view.viewer.reveal(lastEvent);
 							}
 						});
 					}
@@ -156,10 +156,10 @@ public class DebugView extends ViewPart implements Listener, Eraseable {
 		} else if (adapter == TimeFormatToggler.class) {
 			return new TimeFormatToggler() {
 				public void toggle(final boolean toggle) {
-					DebugView.this.absoluteTimeFormat = toggle;
+					view.absoluteTimeFormat = toggle;
 					updateViewer(new Runnable() {
 						public void run() {
-							DebugView.this.viewer.refresh(true);
+							view.viewer.refresh(true);
 						}
 					});
 				}
@@ -167,12 +167,12 @@ public class DebugView extends ViewPart implements Listener, Eraseable {
 		} else if (adapter == CaptureToggler.class) {
 			return new CaptureToggler() {
 				public void toggle(final boolean toggle) {
-					if (!toggle && DebugView.this.serviceRegistration != null) {
-						DebugView.this.serviceRegistration.unregister();
-						DebugView.this.serviceRegistration = null;
-					} else if (toggle && DebugView.this.serviceRegistration == null) {
-						DebugView.this.serviceRegistration = FrameworkUtil.getBundle(getClass()).getBundleContext()
-								.registerService(Listener.class.getName(), DebugView.this, null);
+					if (!toggle && view.serviceRegistration != null) {
+						view.serviceRegistration.unregister();
+						view.serviceRegistration = null;
+					} else if (toggle && view.serviceRegistration == null) {
+						view.serviceRegistration = FrameworkUtil.getBundle(getClass()).getBundleContext()
+								.registerService(Listener.class.getName(), view, null);
 					}
 				}
 			};
@@ -224,7 +224,7 @@ public class DebugView extends ViewPart implements Listener, Eraseable {
 		return this.job;
 	}
 
-	public void erase() {
+	public void clear() {
 		this.events.clear();
 		updateViewer(new Runnable() {
 			public void run() {

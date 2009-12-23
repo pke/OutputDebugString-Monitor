@@ -24,7 +24,7 @@
                visible="true">
          </separator>
          <command
-               commandId="outputdebugstring.ui.EraseCommand"
+               commandId="org.eclipse.ui.edit.clear"
                style="push">
          </command>
          <command
@@ -67,8 +67,8 @@
          </state>
       </command>
       <command
-            id="outputdebugstring.ui.EraseCommand"
-            name="Erase">
+            id="org.eclipse.ui.edit.clear"
+            name="Clear">
       </command>
    </extension>
    <extension
@@ -86,20 +86,20 @@
             icon="icons/e16/autoscroll.png">
       </image>
       <image
-            commandId="outputdebugstring.ui.EraseCommand"
-            icon="icons/e16/erase.png">
+            commandId="org.eclipse.ui.edit.clear"
+            icon="icons/e16/clear.png">
       </image>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="outputdebugstring.ui.internal.handlers.EraseHandler"
-            commandId="outputdebugstring.ui.EraseCommand">
+            class="outputdebugstring.ui.internal.handlers.ClearHandler"
+            commandId="org.eclipse.ui.edit.clear">
          <!--enabledWhen>
             <with
                   variable="activePart">
                <adapt
-                     type="outputdebugstring.ui.Eraseable">
+                     type="outputdebugstring.ui.Clearable">
                </adapt>
             </with>
          </enabledWhen-->
