@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.utils.sync.JFaceSync;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -19,9 +20,8 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.RegistryToggleState;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
@@ -42,13 +42,17 @@ public class DebugView extends ViewPart implements Listener, Clearable {
 	private ServiceRegistration serviceRegistration;
 	private final List<DebugStringEvent> events = new ArrayList<DebugStringEvent>();
 
-	private volatile boolean autoscroll;
-	private volatile boolean absoluteTimeFormat;
+	private State autoscroll;
+	private State absoluteTimeFormat;
 	private final DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM);
 
 	private IWorkbenchSiteProgressService progressService;
 
 	private UIJob job;
+
+	private AutoScrollToggler autoScrollToggler;
+
+	private Table table;
 
 	@Override
 	public void createPartControl(final Composite parent) {
@@ -60,64 +64,69 @@ public class DebugView extends ViewPart implements Listener, Clearable {
 		this.viewer.setLabelProvider(new WorkbenchPartLabelProvider());
 		this.viewer.setUseHashlookup(true);
 		this.viewer.setInput(this.events);
-		final Table table = this.viewer.getTable();
-		TableViewerColumn column = new TableViewerColumn(this.viewer, SWT.LEFT);
-		column.getColumn().setText("#"); //$NON-NLS-1$
-		column.setLabelProvider(new CellLabelProvider() {
+		this.table = this.viewer.getTable();
+		TableViewerColumn viewerColumn = new TableViewerColumn(this.viewer, SWT.LEFT);
+		TableColumn column = viewerColumn.getColumn();
+		tableColumnLayout.setColumnData(column, new ColumnWeightData(20, 40));
+		column.setText("#"); //$NON-NLS-1$
+		viewerColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(final ViewerCell cell) {
 				// TODO: Make this quicker
 				cell.setText(String.valueOf(DebugView.this.events.indexOf(cell.getElement())));
 			}
 		});
-		tableColumnLayout.setColumnData(column.getColumn(), new ColumnWeightData(20, 40));
-		column = new TableViewerColumn(this.viewer, SWT.LEFT);
-		column.getColumn().setText(Messages.DebugView_TimeColumnName);
-		tableColumnLayout.setColumnData(column.getColumn(), new ColumnWeightData(20, 40));
-		column.setLabelProvider(new CellLabelProvider() {
+		viewerColumn = new TableViewerColumn(this.viewer, SWT.LEFT);
+		column = viewerColumn.getColumn();
+		column.setText(Messages.DebugView_TimeColumnName);
+		tableColumnLayout.setColumnData(column, new ColumnWeightData(20, 40));
+		viewerColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(final ViewerCell cell) {
 				final DebugStringEvent event = (DebugStringEvent) cell.getElement();
-				if (DebugView.this.absoluteTimeFormat) {
+				if (DebugView.this.absoluteTimeFormat.getValue().equals(true)) {
 					cell.setText(DebugView.this.timeFormat.format(event.getDate()));
 				} else {
 					cell.setText(String.valueOf(event.getTimeOffset()));
 				}
 			}
 		});
-		column = new TableViewerColumn(this.viewer, SWT.LEFT);
-		column.getColumn().setText(Messages.DebugView_DebugPrintolumnName);
-		tableColumnLayout.setColumnData(column.getColumn(), new ColumnWeightData(80, 100));
-		column.setLabelProvider(new CellLabelProvider() {
+		viewerColumn = new TableViewerColumn(this.viewer, SWT.LEFT);
+		column = viewerColumn.getColumn();
+		column.setText(Messages.DebugView_DebugPrintolumnName);
+		tableColumnLayout.setColumnData(column, new ColumnWeightData(80, 100));
+		viewerColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(final ViewerCell cell) {
 				cell.setText(((DebugStringEvent) cell.getElement()).getText().replace('\n', ' '));
 			}
 		});
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
+		this.table.setHeaderVisible(true);
+		this.table.setLinesVisible(true);
 
 		initToggle("outputdebugstring.ui.CaptureCommand", (Toggler) getAdapter(CaptureToggler.class)); //$NON-NLS-1$
-		initToggle("outputdebugstring.ui.AutoscrollCommand", (Toggler) getAdapter(AutoScrollToggler.class)); //$NON-NLS-1$
-		initToggle("outputdebugstring.ui.TimeFormatCommand", (Toggler) getAdapter(TimeFormatToggler.class)); //$NON-NLS-1$
-
+		this.autoscroll = initToggle(
+				"outputdebugstring.ui.AutoscrollCommand", (Toggler) getAdapter(AutoScrollToggler.class)); //$NON-NLS-1$
+		this.absoluteTimeFormat = initToggle(
+				"outputdebugstring.ui.TimeFormatCommand", (Toggler) getAdapter(TimeFormatToggler.class)); //$NON-NLS-1$
 		this.progressService = (IWorkbenchSiteProgressService) getSite()
 				.getAdapter(IWorkbenchSiteProgressService.class);
 	}
 
-	private void initToggle(final String commandId, final Toggler toggler) {
+	private State initToggle(final String commandId, final Toggler toggler) {
 		final ICommandService commandService = (ICommandService) getSite().getService(ICommandService.class);
 		final Command command = commandService.getCommand(commandId);
 		final State state = command.getState(RegistryToggleState.STATE_ID);
 		if (state != null) {
 			toggler.toggle(state.getValue().equals(true));
 		}
+		return state;
 	}
 
 	@Override
 	public void setFocus() {
-		if (this.viewer != null && !this.viewer.getControl().isDisposed()) {
-			this.viewer.getControl().setFocus();
+		if (this.table != null && !this.table.isDisposed()) {
+			this.table.setFocus();
 		}
 	}
 
@@ -140,28 +149,20 @@ public class DebugView extends ViewPart implements Listener, Clearable {
 	public Object getAdapter(final Class adapter) {
 		final DebugView view = this;
 		if (adapter == AutoScrollToggler.class) {
-			return new AutoScrollToggler() {
-				public void toggle(final boolean toggle) {
-					view.autoscroll = toggle;
-					if (view.autoscroll && !view.events.isEmpty()) {
-						updateViewer(new Runnable() {
-							public void run() {
-								final DebugStringEvent lastEvent = view.events.get(view.events.size() - 1);
-								view.viewer.reveal(lastEvent);
-							}
-						});
+			if (null == this.autoScrollToggler) {
+				this.autoScrollToggler = new AutoScrollToggler() {
+					public void toggle(final boolean toggle) {
+						if (toggle && !view.events.isEmpty()) {
+							JFaceSync.reveal(view.viewer, view.events.get(view.events.size() - 1));
+						}
 					}
-				}
-			};
+				};
+			}
+			return this.autoScrollToggler;
 		} else if (adapter == TimeFormatToggler.class) {
 			return new TimeFormatToggler() {
 				public void toggle(final boolean toggle) {
-					view.absoluteTimeFormat = toggle;
-					updateViewer(new Runnable() {
-						public void run() {
-							view.viewer.refresh(true);
-						}
-					});
+					JFaceSync.refresh(DebugView.this.viewer);
 				}
 			};
 		} else if (adapter == CaptureToggler.class) {
@@ -180,40 +181,18 @@ public class DebugView extends ViewPart implements Listener, Clearable {
 		return super.getAdapter(adapter);
 	}
 
-	private void updateControl(final Control control, final Runnable runnable) {
-		if (control.isDisposed()) {
-			return;
-		}
-		final Display display = control.getDisplay();
-		if (display.getThread() == Thread.currentThread()) {
-			display.syncExec(runnable);
-		} else {
-			display.asyncExec(new Runnable() {
-				public void run() {
-					if (!control.isDisposed()) {
-						runnable.run();
-					}
-				}
-			});
-		}
-	}
-
-	private void updateViewer(final Runnable runnable) {
-		updateControl(this.viewer.getControl(), runnable);
-	}
-
 	void refreshViewer() {
 		this.progressService.schedule(getRefreshJob(), 200);
 	}
 
 	private Job getRefreshJob() {
 		if (this.job == null) {
-			this.job = new UIJob(this.viewer.getControl().getDisplay(), "Refreshing view") {
+			this.job = new UIJob(this.table.getDisplay(), "Refreshing view") {
 				@Override
 				public IStatus runInUIThread(final IProgressMonitor monitor) {
 					DebugView.this.viewer.refresh();
 					DebugView.this.progressService.warnOfContentChange();
-					if (DebugView.this.autoscroll) {
+					if (DebugView.this.autoscroll.getValue().equals(true)) {
 						final DebugStringEvent lastEvent = DebugView.this.events.get(DebugView.this.events.size() - 1);
 						DebugView.this.viewer.reveal(lastEvent);
 					}
@@ -226,10 +205,6 @@ public class DebugView extends ViewPart implements Listener, Clearable {
 
 	public void clear() {
 		this.events.clear();
-		updateViewer(new Runnable() {
-			public void run() {
-				DebugView.this.viewer.refresh();
-			}
-		});
+		JFaceSync.refresh(this.viewer);
 	}
 }
