@@ -8,23 +8,21 @@
 * Contributors:
 * Philipp Kursawe - initial API and implementation
 ******************************************************************************/
-package outputdebugstring.core.osgi.component;
+package outputdebugstring.core;
 
-import outputdebugstring.core.DebugStringEvent;
+import java.util.EventListener;
+
 
 /**
- * Listener used by the <code>MonitorComponent</code> to report debug string events.
+ * Listener to receive debug string events.
  *
- * <p>
- * OSGi services should implement and publish this interface to be notified by 
- * the <code>MonitorComponent</code> about new events.
  * 
  */
-public interface Listener {
+public interface DebugStringEventListener extends EventListener {
 	/**
 	 * Called when a new debug string event occurs.
 	 *
 	 * @param event
 	 */
-	void onDebugString(DebugStringEvent event);
+	void onDebugStringEvent(DebugStringEvent event);
 }

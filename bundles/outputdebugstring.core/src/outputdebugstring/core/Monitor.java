@@ -81,6 +81,12 @@ abstract public class Monitor implements Runnable {
 		}
 	}
 
+	/**
+	 * Implemented by the subclass to react to debug string events.
+	 * 
+	 * @param processId
+	 * @param text
+	 */
 	protected abstract void onDebugString(int processId, String text);
 
 	/**

@@ -17,7 +17,7 @@ import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 
 import outputdebugstring.core.DebugStringEvent;
-import outputdebugstring.core.osgi.component.Listener;
+import outputdebugstring.core.DebugStringEventListener;
 
 /**
  * Logs debug text strings with the OSGi log service using {@link LogService#LOG_DEBUG}.
@@ -25,7 +25,7 @@ import outputdebugstring.core.osgi.component.Listener;
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  *
  */
-public class LogServiceListener implements Listener {
+public class LogServiceListener implements DebugStringEventListener {
 	private LogService logService;
 	private ServiceReference ref;
 	private final boolean logProcessName = true;
@@ -36,7 +36,7 @@ public class LogServiceListener implements Listener {
 		this.logService = (LogService) context.locateService("LogService");
 	}
 
-	public void onDebugString(final DebugStringEvent event) {
+	public void onDebugStringEvent(final DebugStringEvent event) {
 		this.logService.log(this.ref, LogService.LOG_DEBUG, String.format(
 				"[%d, %s] %s", event.getProcessId(), event.getProcessName(), event.getText())); //$NON-NLS-1$
 	}

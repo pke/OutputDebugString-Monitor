@@ -32,10 +32,10 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
 
 import outputdebugstring.core.DebugStringEvent;
-import outputdebugstring.core.osgi.component.Listener;
+import outputdebugstring.core.DebugStringEventListener;
 import outputdebugstring.ui.Clearable;
 
-public class DebugView extends ViewPart implements Listener, Clearable {
+public class DebugView extends ViewPart implements DebugStringEventListener, Clearable {
 	public static final String ID = "outputdebugstring.ui.DebugView"; //$NON-NLS-1$
 
 	private TableViewer viewer;
@@ -139,7 +139,7 @@ public class DebugView extends ViewPart implements Listener, Clearable {
 		super.dispose();
 	}
 
-	public void onDebugString(final DebugStringEvent event) {
+	public void onDebugStringEvent(final DebugStringEvent event) {
 		this.events.add(event);
 		refreshViewer();
 	}
@@ -173,7 +173,7 @@ public class DebugView extends ViewPart implements Listener, Clearable {
 						view.serviceRegistration = null;
 					} else if (toggle && view.serviceRegistration == null) {
 						view.serviceRegistration = FrameworkUtil.getBundle(getClass()).getBundleContext()
-								.registerService(Listener.class.getName(), view, null);
+								.registerService(DebugStringEventListener.class.getName(), view, null);
 					}
 				}
 			};

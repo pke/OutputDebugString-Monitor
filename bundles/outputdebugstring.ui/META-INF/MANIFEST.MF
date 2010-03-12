@@ -12,6 +12,7 @@ Import-Package: org.eclipse.core.commands,
  org.eclipse.jface,
  org.eclipse.jface.layout,
  org.eclipse.jface.util,
+ org.eclipse.jface.utils.sync;version="1.0.0",
  org.eclipse.jface.viewers,
  org.eclipse.osgi.util,
  org.eclipse.swt,
@@ -27,6 +28,5 @@ Import-Package: org.eclipse.core.commands,
  org.eclipse.ui.services,
  org.eclipse.ui.views,
  org.osgi.framework;version="1.5.0",
- outputdebugstring.core;version="1.0.0",
- outputdebugstring.core.osgi.component;version="1.0.0"
+ outputdebugstring.core;version="1.0.0"
 Bundle-ActivationPolicy: lazy

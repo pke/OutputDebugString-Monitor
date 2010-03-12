@@ -10,5 +10,4 @@ Require-Bundle: org.junit4;bundle-version="4.7.0"
 Import-Package: com.sun.jna.examples.win32,
  com.sun.jna.ptr;version="3.1.0",
  com.sun.jna.win32;version="3.1.0",
- outputdebugstring.core,
- outputdebugstring.core.osgi.component;version="1.0.0"
+ outputdebugstring.core

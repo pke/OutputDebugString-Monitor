@@ -18,7 +18,7 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 
 import outputdebugstring.core.DebugStringEvent;
-import outputdebugstring.core.osgi.component.Listener;
+import outputdebugstring.core.DebugStringEventListener;
 
 /**
  * Listener that will create an Event with the <code>"outputdebugstring/monitor"</code> topic.
@@ -33,7 +33,7 @@ import outputdebugstring.core.osgi.component.Listener;
  * @author <a href="mailto:phil.kursawe@gmail.com">Philipp Kursawe</a>
  *
  */
-public class EventAdminListener implements Listener {
+public class EventAdminListener implements DebugStringEventListener {
 	private static final String EVENT_TOPIC = "outputdebugstring/monitor"; //$NON-NLS-1$
 	private static final String TEXT2 = "text"; //$NON-NLS-1$
 	private static final String PROCESS_ID = "process.id"; //$NON-NLS-1$
@@ -43,7 +43,7 @@ public class EventAdminListener implements Listener {
 		this.eventAdmin = (EventAdmin) context.locateService("EventAdmin"); //$NON-NLS-1$
 	}
 
-	public void onDebugString(final DebugStringEvent event) {
+	public void onDebugStringEvent(final DebugStringEvent event) {
 		final Map<String, Object> props = new HashMap<String, Object>();
 		props.put(PROCESS_ID, event.getProcessId());
 		props.put(TEXT2, event.getText());

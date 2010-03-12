@@ -3,6 +3,6 @@
    <implementation class="outputdebugstring.core.osgi.event.internal.EventAdminListener"/>
    <reference cardinality="1..1" interface="org.osgi.service.event.EventAdmin" name="EventAdmin" policy="static"/>
    <service>
-      <provide interface="outputdebugstring.core.osgi.component.Listener"/>
+      <provide interface="outputdebugstring.core.DebugStringEventListener"/>
    </service>
 </scr:component>
